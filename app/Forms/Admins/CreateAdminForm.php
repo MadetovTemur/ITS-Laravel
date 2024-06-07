@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Forms;
+namespace App\Forms\Admins;
 
 use ProtoneMedia\Splade\FormBuilder\{Submit, Radios, Input, Hidden};
 use ProtoneMedia\Splade\SpladeForm;

@@ -2,20 +2,19 @@
 
 namespace App\Http\Requests\AdminRequests;
 
-use App\Http\Requests\AdminRequests\AdminRequest;
+use App\Http\Requests\MainRequest;
 
-class UpdatePasswordRequest extends AdminRequest
-{
+class UpdatePasswordRequest extends MainRequest {
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
-    {
+    * Get the validation rules that apply to the request.
+    *
+    * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+    */
+
+    public function rules(): array {
         return [
-            "password" => ['required', 'string', 'min:8', 'max:28', 'confirmed'],
+            'password' => [ 'required', 'string', 'min:8', 'max:28', 'confirmed' ],
         ];
     }
 }

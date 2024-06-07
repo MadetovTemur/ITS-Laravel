@@ -1,20 +1,17 @@
 <?php 
 
-namespace App\Forms;
+namespace App\Forms\Admins;
 
 use ProtoneMedia\Splade\FormBuilder\{Submit, Radios, Input, Hidden};
 use ProtoneMedia\Splade\SpladeForm;
 
 
-
 class UpdateAdminForm 
 {
-
 
 	public static function fields():array
 	{
 		return [
-
   		Hidden::make('id'),
             
       Input::make('first_name')->label('First Name *')->class('mt-4')

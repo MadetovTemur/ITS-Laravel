@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\AdminControllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
-use  App\Tables\Admins;
+
 use App\Models\Admin;
+use App\Tables\Admins;
 use App\Toasts\Notification;
-use App\Forms\{CreateAdminForm, UpdateAdminForm, UpdatePasswordAdminForm};
+use App\Forms\Admins\{CreateAdminForm, UpdateAdminForm, UpdatePasswordAdminForm};
 use App\Http\Requests\AdminRequests\{AdminRequest, UpdatePasswordRequest, UpdateRequest};
+
 
 class AdminController extends Controller
 {
@@ -66,17 +67,17 @@ class AdminController extends Controller
    */
   public function edit(Admin $admin)
   {
-
-    $form = UpdateAdminForm::make(route('admin.admins.update', $admin->id), 'PUT', $admin->toArray());
-    $form1 = UpdatePasswordAdminForm::make(route('admin.admins.update.password', $admin->id), 'PUT', class: 'mt-5'); 
-    return view('admin.admins.edit', ['form' =>  $form, 
-                'form_update_password' => $form1]);
+    return view('admin.admins.edit', [
+        'form' =>   UpdateAdminForm::make(route('admin.admins.update', $admin->id), 'PUT', $admin->toArray()), 
+        'form_update_password' =>  UpdatePasswordAdminForm::make(route('admin.admins.update.password', $admin->id), 'PUT', class: 'mt-5')
+      ]
+    );
   }
 
   public function update_password(UpdatePasswordRequest $request, Admin $admin)
   {
   
-    if(! $admin->update( ['password' => Hash::make( $request->input('password') )])   ){
+    if(! $admin->update( ['password' => Hash::make( $request->input('password') )]) ){
       Notification::warning('No Save Base');
       return redirect()->back();    
     }
@@ -92,17 +93,24 @@ class AdminController extends Controller
   {
     if(! $admin->update($request->validated())){
       Notification::warning('No Save Base');
-      return redirect()->back();    }
+      return redirect()->back();    
+    }
 
     Notification::siccses('Update Your Data');
     return redirect()->route('admin.admins.index');
   }
+  
 
   /**
    * Remove the specified resource from storage.
    */
   public function destroy(Admin $admin)
   {
-    dD(__FUNCTION__);
+    $admin->delete();
+    Notification::siccses('Delete Admin');
+    return redirect()->route('admin.admins.index');
   }
+
+
+
 }

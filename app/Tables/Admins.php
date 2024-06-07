@@ -48,21 +48,15 @@ class Admins extends AbstractTable
     public function configure(SpladeTable $table)
     {
         $table
-            ->withGlobalSearch(columns: ['id'])
+            ->withGlobalSearch(columns: ['id', 'first_name', 'last_name'])
             ->column('id', sortable: true)
             ->column('first_name', sortable: true, searchable: true)
             ->column('last_name', sortable: true, searchable: true)
             ->column('sure_name', sortable: true, searchable: true)
-            ->column('username', sortable: true, searchable: true, hidden: true)
+            ->column('username', sortable: true, searchable: true, hidden: true,  exportAs: false)
             ->column('telephone', sortable: true, searchable: true, hidden: true)
             ->column('actions', exportAs: false)
             ->rowLink(fn (Admin $admin) => route('admin.admins.show', $admin->id))
             ->paginate(30);
-            // ->searchInput()
-            // ->selectFilter()
-            // ->withGlobalSearch()
-
-            // ->bulkAction()
-            // ->export()
     }
 }
