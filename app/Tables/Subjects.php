@@ -3,11 +3,11 @@
 namespace App\Tables;
 
 use App\Models\Subject;
+use App\Toasts\Notification;
 use Illuminate\Http\Request;
-use ProtoneMedia\Splade\AbstractTable;
 use ProtoneMedia\Splade\SpladeTable;
-use ProtoneMedia\Splade\Facades\Toast;
-use Illuminate\Support\Str;
+use ProtoneMedia\Splade\AbstractTable;
+
 
 
 
@@ -20,7 +20,8 @@ class Subjects extends AbstractTable
      */
     public function __construct()
     {
-       // use Illuminate\Support\Facades\Cache;
+
+        // use Illuminate\Support\Facades\Cache;
         // $r = Cache::get('subjects', function () {
         //     $cache = Subject::all();
         //     Cache::put('subjects', $cache, now()->addMinute(5));
@@ -59,11 +60,9 @@ class Subjects extends AbstractTable
     {
 
         $table
-            ->withGlobalSearch(columns: ['id'])
+            ->withGlobalSearch(columns: ['id', 'name'])
             ->column('id', sortable: true, searchable: true)
             ->column('name', sortable: true, searchable: true)
-            // ->column('discription', hidden: true, searchable: true,
-            // as: fn($word) => Str::mask($word, '.', 100))
             ->column('actions', exportAs: false)
             ->bulkAction(
                 label: 'Delete Selected Subjects',
@@ -71,16 +70,10 @@ class Subjects extends AbstractTable
                 confirm: 'Are you sure you want to delete the selected subjects?',
                 confirmButton: 'Delete',
                 cancelButton: 'Cancel',
-                 requirePassword: true,
-                after: fn () => Toast::info('Subjecta deleted successfully!'),
+                requirePassword: true,
+                after: fn () => Notification::info('Subjecta deleted successfully!'),
             )
-            // ->rowLink(fn (Subject $subject) => route('admin.subjects.show', $subject->id))
+            ->rowLink(fn (Subject $subject) => route('admin.subjects.show', $subject->id))
             ->paginate(20);
-            // ->searchInput()
-            // ->selectFilter()
-            // ->withGlobalSearch()
-
-            // ->bulkAction()
-            // ->export()
     }
 }

@@ -7,12 +7,11 @@ use Illuminate\Http\Request;
 use ProtoneMedia\Splade\Facades\Toast;
 
 use App\Http\Requests\SubjectRequests\{SubjectRequest, SubjectUpdateRequest};
-use App\Forms\{CreateSubjectForm, UpdateSubjectForm};
-use ProtoneMedia\Splade\FormBuilder\{Submit, Textarea, Input, Hidden};
-use ProtoneMedia\Splade\SpladeForm;
+use App\Forms\Subjects\{CreateSubjectForm, UpdateSubjectForm};
 
 use App\Models\Subject;
 use App\Tables\Subjects;
+use App\Toasts\Notification;
 
 class SubjectController extends Controller
 {
@@ -31,7 +30,9 @@ class SubjectController extends Controller
    */
   public function create()
   {
-    return view('admin.subjects.create', ['form' => CreateSubjectForm::class]);
+    return view('admin.subjects.create', [
+      'form' => CreateSubjectForm::make(route('admin.subjects.store'))
+    ]);
   }
 
   /**
@@ -39,24 +40,14 @@ class SubjectController extends Controller
    */
   public function store(SubjectRequest $request)
   {
-    $validated = $request->validated();
-
-    $result = Subject::create(
-      [
-        'name' => $validated['name'],
-        'discription' => $validated['discription'],
-      ]
-    );
-
-    if(is_null($result)){
-      Toast::title('Whoops!')
-        ->warning('No Save Base')
-        ->center()
-        ->backdrop();
-        return $request->back();
+    if (is_null(
+      Subject::create($request->validated())
+    )) {
+      Notification::warning('No save base');
+      return $request->back();
     }
-    
-    Toast::title('Create new Subject');
+
+    Notification::siccses('Create new Subject');
     return redirect()->route('admin.subjects.index');
   }
 
@@ -73,12 +64,16 @@ class SubjectController extends Controller
    */
   public function edit(Subject $subject, Request $request)
   {
-    $form = $this->form(route('admin.subjects.update', $subject->id), 
-                        'PUT',
-                        $subject->toArray());
-    
-    return view('admin.subjects.edit', 
-      ['form' => $form]);
+    $form = $this->form(
+      route('admin.subjects.update', $subject->id),
+      'PUT',
+      $subject->toArray()
+    );
+
+    return view(
+      'admin.subjects.edit',
+      ['form' => $form]
+    );
   }
 
   /**
@@ -101,8 +96,7 @@ class SubjectController extends Controller
         ->warning('No Update Base')
         ->center()
         ->backdrop();
-        return $request->back();
-
+      return $request->back();
     }
 
     Toast::title('Update Subject ');
@@ -110,41 +104,11 @@ class SubjectController extends Controller
     return redirect()->route('admin.subjects.index');
   }
 
-  private function form(string $url = '', string $method = 'POST', array $data = [])
-  {
-
-    $from = SpladeForm::make()->action($url)
-      ->method($method)
-      ->fields([
-          Hidden::make('id'),
-            
-          Input::make('name')
-                ->label('Subject Name')
-                ->class('mt-4')
-                ->rules(['required', 'min:4', 'max:255']),
-            
-          Textarea::make('discription')
-                ->label('Discription Name')
-                ->autosize()
-                ->class('mt-4')
-                ->rules(['required', 'max:255']),
-            //
-
-          Submit::make()
-                ->class('mt-4 bg-slate-900 text-white')
-                ->label('Save'),
-      ])->fill($data);
-    return $from;
-  }
 
   /**
    * Remove the specified resource from storage.
    */
   public function destroy(string $id)
   {
-
   }
-
-
-  
 }
