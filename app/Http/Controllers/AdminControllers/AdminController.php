@@ -43,9 +43,8 @@ class AdminController extends Controller
     $validated['uuid'] = (string) Str::uuid();
     $validated['password'] = Hash::make( $validated['password'] );
 
-    $result = Admin::create($validated);
 
-    if(is_null($result)){
+    if(is_null( Admin::create($validated) )){
       Notification::warning('No Save Base');
       return redirect()->back();    
     }
