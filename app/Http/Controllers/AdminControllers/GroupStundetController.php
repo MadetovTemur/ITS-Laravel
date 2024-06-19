@@ -11,16 +11,16 @@
 
 namespace App\Http\Controllers\AdminControllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
-use App\Models\{Group, GroupStudents};
-
-use App\Http\Requests\GroupRequests\GroupStudentRequest;
-use App\Toasts\Notification;
-
 use App\Enums\StudentStatus;
 use App\Forms\Groups\Students\{CreateGroupStudents, EditGroupStudents};
+
+use App\Http\Controllers\Controller;
+
+use App\Http\Requests\GroupRequests\GroupStudentRequest;
+use App\Models\{Group, GroupStudents};
+
+use App\Toasts\Notification;
+use Illuminate\Http\Request;
 
 class GroupStundetController extends Controller
 {
@@ -77,11 +77,13 @@ class GroupStundetController extends Controller
   /**
    * Show the form for editing the specified resource.
    */
-  public function edit(Group $group, GroupStudents $groupStudents)
+  public function edit(string $group, string $groupStudents)
   {
-    dd($groupStudents, $group);
+    $group = Group::where('id', $group)->first() ?? abort(404); 
+    $groupStudents = GroupStudents::where('student_id', $groupStudents)->first() ?? abort(404); 
+    
     return view('admin.groups.students.create', [
-      'form' => EditGroupStudents::make(route('admin.groups.students.update', [$group->id, $groupStudents->id])),
+      'form' => EditGroupStudents::make(route('admin.groups.students.update', [$group->id, $groupStudents->student_id]), 'PUT', $groupStudents->toArray()),
     ]);
   }
 
@@ -96,10 +98,8 @@ class GroupStundetController extends Controller
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(string $id)
+  public function destroy(string $group, string $groupStudents)
   {
-    //
+    return dd($group, $groupStudents);
   }
-
-
 }

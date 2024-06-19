@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Tables;
+
 use Illuminate\Support\Facades\Route;
 
 use App\Models\{Group, Student};
@@ -37,9 +38,8 @@ class GroupStudents extends AbstractTable
      */
     public function for()
     {
-        // dd(\App\Models\GroupStudents::query()->where('group_id', Route::current()->parameters['group']['id'])->get());
-        return 
-        \App\Models\GroupStudents::query()->where('group_id', Route::current()->parameters['group']['id']);
+        return
+            \App\Models\GroupStudents::query()->where('group_id', Route::current()->parameters['group']['id']);
     }
 
     /**
@@ -53,20 +53,27 @@ class GroupStudents extends AbstractTable
         $table
             ->withGlobalSearch(columns: ['id'])
             ->column('id', sortable: true)
-            ->column('student_id', label:'Full Name', sortable: true, searchable: true, 
-                as: fn(int $id) => Student::where('id', $id)->first()->full_name() )
-            ->column('start_at', sortable: true,   as: fn($date) => \Carbon\Carbon::parse($date)->format('j F, Y'))
-            ->column('status', sortable: true, searchable: true, 
-                as: fn($status) => $status->name )
-            ->column('finish_at', sortable: true,  hidden: true, 
-                as: fn($date) => ($date == null) ? '' :\Carbon\Carbon::parse($date)->format('j F, Y') )
+            ->column(
+                'student_id',
+                label: 'Full Name',
+                sortable: true,
+                searchable: true,
+                as: fn (int $id) => Student::where('id', $id)->first()->full_name()
+            )
+            ->column('start_at', sortable: true,   as: fn ($date) => \Carbon\Carbon::parse($date)->format('j F, Y'))
+            ->column(
+                'status',
+                sortable: true,
+                searchable: true,
+                as: fn ($status) => $status->name
+            )
+            ->column(
+                'finish_at',
+                sortable: true,
+                hidden: true,
+                as: fn ($date) => ($date == null) ? '' : \Carbon\Carbon::parse($date)->format('j F, Y')
+            )
             ->column('actions', exportAs: false)
             ->paginate(30);
-            // ->searchInput()
-            // ->selectFilter()
-            // ->withGlobalSearch()
-                    // ->rowLink(fn (Admin $admin) => route('admin.admins.show', $admin->id))
-            // ->bulkAction()
-            // ->export()
     }
 }

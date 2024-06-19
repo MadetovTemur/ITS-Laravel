@@ -13,14 +13,13 @@ use App\Enums\StudentStatus;
 class EditGroupStudents
 {
 
-
     public static function fields(): array
     {
         return [
 
             Select::make('status')->label('Group Students')->class('mt-4')
                 ->options(
-                    collect(StudentStatus::cases())->pluck("value")->toArray()
+                    collect(StudentStatus::cases())->pluck("name","value")->toArray()
                 ),
 
             Date::make('start_at')->label('Start At (defoult date `now`)')->class('mt-4')
@@ -37,8 +36,10 @@ class EditGroupStudents
 
     public static function make(string $url = '', string $method = 'POST', array $data = []): SpladeForm
     {
+        // dd($data);
         return SpladeForm::make()->action($url)->method($method)->fields(
             self::fields()
         )->fill($data);
+
     }
 }
